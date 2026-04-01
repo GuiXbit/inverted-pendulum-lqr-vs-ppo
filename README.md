@@ -33,6 +33,9 @@ Model-free reinforcement learning algorithm. The agent learns a policy purely th
 
 ## Results
 
+
+### Without noise
+
 | Method | Avg Reward | Avg Control Effort | Avg State Norm |
 |---|---|---|---|
 | LQR | 500.00 | 1.18 | 0.44 |
@@ -40,10 +43,19 @@ Model-free reinforcement learning algorithm. The agent learns a policy purely th
 
 Both controllers achieve maximum reward. PPO produces smoother control actions and keeps the system closer to equilibrium, at the cost of requiring 100k timesteps of training. 
 
+### With noise (std=0.1 on theta)
+
+| Method | Avg Reward | Avg Control Effort | Avg State Norm |
+|---|---|---|---|
+| LQR | 199.00 | 3.14 | 0.86 |
+| PPO | 500.00 | 0.50 | 0.41 |
+
+Under observation noise on the pole angle, LQR degrades significantly while PPO maintains maximum reward. This is expected — LQR was designed assuming perfect state knowledge, while PPO learned a policy robust enough to handle measurement uncertainty implicitly through training.
+
+
 **WIP:**
 - Comparison plots (reward, control effort, state norm)
-- Robustness test under external disturbances
-
+- Develop the Recursive Robust LQR 
 ---
 
 ## Setup

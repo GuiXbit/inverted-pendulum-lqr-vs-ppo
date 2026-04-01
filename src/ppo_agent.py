@@ -17,7 +17,7 @@ def train_or_load_ppo():
     env.close()
     return model
 
-def run_ppo(n_episodes=20, render=False):
+def run_ppo(n_episodes=20, render=False, noise_std=0):
     model = train_or_load_ppo()
     render_mode = "human" if render else None
     eval_env = gym.make("CartPole-v1", render_mode=render_mode)
@@ -28,8 +28,13 @@ def run_ppo(n_episodes=20, render=False):
         obs, _ = eval_env.reset()
         current_rewards, current_efforts, current_norms = [], [], []
         terminated = truncated = False
+        #adicionar ruido
+        
+
         while not (terminated or truncated):
-            action, _ = model.predict(obs)
+            obs_noisy = obs.copy()
+            obs_noisy[2] += np.random.normal(0, noise_std)
+            action, _ = model.predict(obs_noisy)
             current_efforts.append(abs(float(action)))
             current_norms.append(np.linalg.norm(obs))
             obs, reward, terminated, truncated, _ = eval_env.step(action)

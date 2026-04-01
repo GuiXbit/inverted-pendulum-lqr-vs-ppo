@@ -20,7 +20,7 @@ def build_lqr():
     return K
 
 
-def run_lqr(n_steps=1000, render=False):
+def run_lqr(n_steps=1000, render=False,noise_std=0):
     K = build_lqr()
     render_mode = "human" if render else None
     env = gym.make("CartPole-v1", render_mode=render_mode)
@@ -30,7 +30,9 @@ def run_lqr(n_steps=1000, render=False):
     current_rewards, current_efforts, current_norms = [], [], []
 
     for _ in range(n_steps):
-        u = (-K @ obs).item()
+        obs_noisy = obs.copy()
+        obs_noisy[2] += np.random.normal(0, noise_std)
+        u = (-K @ obs_noisy).item()
         action = 0 if u > 0 else 1
         current_efforts.append(abs(u))
         current_norms.append(np.linalg.norm(obs))
